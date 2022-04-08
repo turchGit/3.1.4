@@ -5,7 +5,7 @@
     <title>Title</title>
 </head>
 <body>
-<form th:method="POST" th:action="@{/adduser}" th:object="${user}">
+<form th:method="POST" th:action="@{/admin/adduser}" th:object="${user}">
     <label for="firstName">User name: </label>
     <input type="text" th:field="*{firstName}" id="firstName"/>
     <br/>
@@ -15,7 +15,24 @@
     <label for="age">User age: </label>
     <input type="text" th:field="*{age}" id="age"/>
     <br/>
+    <label for="login">User login: </label>
+    <input type="text" th:field="*{login}" id="login"/>
+    <br/>
+    <label for="password">User password: </label>
+    <input type="password" th:field="*{password}" id="password"/>
+    <br/>
+    <select th:field="*{role}">
+        <option th:each="role : ${T(com.example.boot3_1_1.model.Role).values()}"
+                th:value="${role}"
+                th:text="${role}">text</option>
+    </select>
+    <br/>
+
     <input type="submit" value="Add user">
+    </br>
+    <form th:action="@{/logout}" method="post">
+        <input type="submit" value="Sign Out"/>
+    </form>
 </form>
 </body>
 </html>

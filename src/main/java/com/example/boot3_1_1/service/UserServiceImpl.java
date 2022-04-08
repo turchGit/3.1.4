@@ -3,6 +3,8 @@ package com.example.boot3_1_1.service;
 import com.example.boot3_1_1.model.User;
 import com.example.boot3_1_1.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -52,5 +54,10 @@ public class UserServiceImpl implements UserService{
     public void updateUser(User user) {
         userRepository.save(user);
 
+    }
+
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        return userRepository.findUserByLogin(username);
     }
 }

@@ -9,6 +9,14 @@
 <p th:text="${user.getSecondName()}">text</p>
 <p th:text="${user.getAge()}">text</p>
 </br>
+
+<form th:action="@{/admin/delete/{id}(id=${user.getId()})}" method="post">
+    <input type="submit" value="Confirm"/>
+</form>
+<form th:action="@{/admin}" method="get">
+    <input type="submit" value="Cancel"/>
+</form>
+</br>
 <form th:action="@{/logout}" method="post">
     <input type="submit" value="Sign Out"/>
 </form>
