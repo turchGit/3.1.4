@@ -8,10 +8,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
 
@@ -30,17 +27,14 @@ public class UserController {
 
 
         model.addAttribute("users", userService.getUsers());
-        return "users";
+        return "adminPage";
     }
 
-    @GetMapping("user/{id}")
-    public String getUser(@PathVariable("id") Long id, Model model, Authentication authentication) {
+    @GetMapping("user")
+    public String getUser(Model model, Authentication authentication) {
         User currentUser = (User) authentication.getPrincipal();
-        if (!currentUser.getRoles().contains(Role.ADMIN) && currentUser.getId() != id) {
-            return "redirect:/user/" + currentUser.getId();
-        }
-        model.addAttribute("user", userService.getUserById(id));
-        return "user";
+        model.addAttribute("user", currentUser);
+        return "userPage";
 
     }
 
@@ -48,16 +42,17 @@ public class UserController {
     @PreAuthorize("hasAuthority('ADMIN')")
     public String addUser(Model model) {
         model.addAttribute("user", new User());
-        return "userForm";
+        return "newUser";
     }
 
     @PostMapping("admin/adduser")
     @PreAuthorize("hasAuthority('ADMIN')")
-    public String newUser(@ModelAttribute("user") User user, Model model) {
+    public String newUser(@ModelAttribute User user) {
         user.setActive(true);
         if (userService.getUsers().stream().anyMatch(user1 -> user1.getLogin().equals(user.getLogin()))) {
             return "redirect:/admin";
         }
+
 
         Set<Role> roles = new HashSet<>();
         roles.add(Role.USER);
@@ -71,30 +66,25 @@ public class UserController {
 
     }
 
-    @GetMapping("admin/delete/{id}")
-    @PreAuthorize("hasAuthority('ADMIN')")
-    public String deleteUser(@PathVariable("id") Long id,Model model) {
-        model.addAttribute("user", userService.getUserById(id));
-        return "userDeleteConfirmForm";
-    }
 
-    @PostMapping("admin/delete/{id}")
+
+    @PostMapping("admin/delete")
     @PreAuthorize("hasAuthority('ADMIN')")
-    public String deleteUser(@PathVariable("id") Long id) {
-        userService.removeUserById(id);
+    public String deleteUser(User user) {
+        userService.removeUserById(user.getId());
         return "redirect:/admin";
     }
 
-    @GetMapping("admin/update/{id}")
-    @PreAuthorize("hasAuthority('ADMIN')")
-    public String updateUser(@PathVariable("id") Long id, Model model) {
-        model.addAttribute("user", userService.getUserById(id));
-
-
-        return "userUpdateForm";
+    @RequestMapping("admin/getUser/{id}")
+    @ResponseBody
+    public User getUser(@PathVariable Long id){
+        System.out.println(userService.getUserById(id).getLogin());
+        return userService.getUserById(id);
     }
 
-    @PostMapping("admin/update/{id}")
+
+
+    @PostMapping("admin/edit")
     @PreAuthorize("hasAuthority('ADMIN')")
     public String confirmUserUpdate(@ModelAttribute("user") User user) {
         if (userService.getUsers().stream().anyMatch(user1 -> user1.getLogin().equals(user.getLogin()))&&

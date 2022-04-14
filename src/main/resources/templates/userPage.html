@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml">
+
+<head>
+    <meta charset="UTF-8"
+    >
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+
+    <title>Title</title>
+    <style>
+        a:active,
+        a:hover,
+        a {
+            text-decoration: none;
+            color: #666;
+        }
+    </style>
+
+</head>
+<body>
+<div class="no-gutters ">
+    <div class="row" style="background-color: #343a40; ">
+        <div class="col">
+            <div class="text-left" style=" color: #fffff3;margin-left: 20px; margin-top: 10px;margin-bottom: 10px">
+                <strong><span sec:authentication="principal.login">Bob</span></strong> with roles:
+                <span sec:authentication="principal.roles">roles</span>
+            </div>
+        </div>
+        <div class="col">
+            <div class="text-right" style="color:  #9a9787;margin-right: 10px;margin-top: 10px;
+
+            margin-bottom: 10px;">
+                <form th:action="@{/logout}" method="post">
+                    <input class="button" style="background: transparent;color: #9a9787; border: none" type="submit" value="Logout"/>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="row" style="min-height: 1000px">
+        <div class="col-2" style="margin-top: 20px; padding-right: 0px">
+            <div sec:authorize="hasAuthority('ADMIN')">
+
+
+                <form th:action="@{/admin}" method="get">
+                    <input type="submit" value="   Admin" style="background-color: white; /* Green */
+                            border: none;
+                            color: rgb(0,123,255);
+                            text-align: left;
+                            text-decoration: none;
+                            width: 100%;
+                            height: 40px;
+                            border-radius: 4px"/>
+                </form>
+            </div>
+            <form th:action="@{/user}" method="get">
+                <input type="submit" value="   User" style="background-color: rgb(0,123,255); /* Green */
+                            border: none;
+                            color: white;
+                            text-align: left;
+                            text-decoration: none;
+                            width: 100%;
+                            height: 40px;
+                            "/>
+            </form>
+        </div>
+        <div class="col-10" style="background-color: rgba(248,249,250,0.92)">
+
+            <div style="margin-top: 20px">
+                <h1>User information-page</h1>
+            </div>
+            <div class="card" style="margin-right: 40px">
+
+
+                <div class="card-header">
+                    <h4>About user</h4>
+
+
+                </div>
+                <div class="card-block" style="margin-top: 20px; margin-bottom: 50px;margin-left: 20px;margin-right: 20px;">
+
+                    <table class="table table-striped">
+
+                        <thead>
+
+                        <tr>
+                            <th th:scope="col">ID</th>
+                            <th th:scope="col">First Name</th>
+                            <th th:scope="col">Last Name</th>
+                            <th th:scope="col">Age</th>
+                            <th th:scope="col">Login</th>
+                            <th th:scope="col">Role</th>
+
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr>
+                            <td sec:authentication="principal.id">id</td>
+                            <td sec:authentication="principal.firstName">name</td>
+                            <td sec:authentication="principal.secondName">secondName</td>
+                            <td sec:authentication="principal.age">age</td>
+                            <td sec:authentication="principal.login">login</td>
+                            <td sec:authentication="principal.roles">roles</td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>
