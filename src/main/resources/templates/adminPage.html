@@ -171,7 +171,7 @@
                     <input type="password" class="form-control" id="editPassword" name="password"/>
                     <br/>
                     <label for="editRoles"><strong>Roles</strong></label>
-                    <select class="custom-select" size="2" id="editRoles" name="roles">
+                    <select class="custom-select" size="2" id="editRoles" name="role">
                         <option th:each="role : ${T(com.example.boot3_1_1.model.Role).values()}"
                                 th:value="${role}"
                                 th:text="${role}">ROLE

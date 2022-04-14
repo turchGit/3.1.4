@@ -96,7 +96,11 @@ public class UserController {
         roles.add(Role.USER);
         if (user.getRole() == Role.ADMIN) {
             roles.add(Role.ADMIN);
+        }else {
+            roles.remove(Role.ADMIN);
         }
+        System.out.println(user.getRole());
+        System.out.println(roles);
         user.setRoles(roles);
         userService.updateUser(user);
         return "redirect:/admin";
