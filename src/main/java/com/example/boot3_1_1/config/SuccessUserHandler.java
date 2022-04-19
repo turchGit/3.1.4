@@ -20,13 +20,8 @@ public class SuccessUserHandler implements AuthenticationSuccessHandler {
                                         HttpServletResponse httpServletResponse,
                                         Authentication authentication) throws IOException {
 
-        User currentUser = (User) authentication.getPrincipal();
 
+        httpServletResponse.sendRedirect("/app");
 
-        if (currentUser.getRoles().contains(Role.ADMIN)) {
-            httpServletResponse.sendRedirect("/admin");
-        } else {
-            httpServletResponse.sendRedirect("/user");
-        }
     }
 }
