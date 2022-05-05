@@ -12,7 +12,7 @@ public interface UserService extends UserDetailsService {
 
     void removeUserById(Long id);
 
-    void addUser(User user);
+    User addUser(User user);
 
-    void updateUser(User user);
+    User updateUser(User user);
 }

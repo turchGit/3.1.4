@@ -6,7 +6,7 @@ const userPageButton = document.getElementById("open-user-page")
 const adminPageButton = document.getElementById("open-admin-page")
 userDataTableUpdate()
 if (isAdmin) {
-    updateTable()
+    initTable()
 } else {
     userPage.style.display = "block";
     userPageButton.style.color = "white"
@@ -43,25 +43,49 @@ async function getUser(userId){
     return response.json()
 }
 
-function addUser(firstName,secondName,age,login, password,role){
+function addUser(user) {
     fetch("http://localhost:8080/users", {
         method: 'POST',
         headers: {
             'Content-type': 'application/json'
         },
         body: JSON.stringify({
-            "firstName": firstName,
-            "secondName": secondName,
-            "age": age,
-            "login": login,
-            "password": password,
-            "role":role,
+            "firstName": user.firstName,
+            "secondName": user.secondName,
+            "age": user.age,
+            "login": user.login,
+            "password": user.password,
+            "role":user.role,
             "active":true
 
         })
-    }).then(() => updateTable());
+    }).then((u) =>  u.json())
+        .then(user => addUserOnPage(user))
     const tab = document.getElementById("all-users-tab")
     tab.click();
+}
+
+function addUserOnPage(user) {
+    if (user==null){
+        return
+    }
+    const element = document.getElementById("dataTable")
+    let userHtml = ""
+    userHtml+="<tr id='"+user.id+"'>";
+    userHtml+="<td>"+user.id+"</td>"
+    userHtml+="<td>"+user.firstName+"</td>"
+    userHtml+="<td>"+user.secondName+"</td>"
+    userHtml+="<td>"+user.age+"</td>"
+    userHtml+="<td>"+user.login+"</td>"
+    userHtml+="<td>"+user.roles+"</td>"
+    userHtml+= "<td>"+"<button type='button' class='btn btn-primary' data-toggle='modal' data-target='#editModal' " +
+        "data-userId='" + user.id + "'" +
+        ">Edit</button></td>";
+    userHtml += "<td>" + "<button type='button' class='btn btn-danger' data-toggle='modal' data-target='#deleteModal'" +
+        " data-userId='" + user.id + "'" +
+        ">Delete</button></td>";
+    userHtml+="</tr>";
+    element.insertAdjacentHTML('beforeend',userHtml);
 }
 
 function deleteUser(userId){
@@ -90,12 +114,29 @@ function updateUser(user){
             "active":true
 
         })
-    }).then(() => {
-        updateTable()
-        userDataTableUpdate()
-
-    });
+    }).then((u) => u.json())
+        .then(user => updateUserOnPage(user))
+        .then(userDataTableUpdate)
 }
+
+function updateUserOnPage(user) {
+    const element = document.getElementById(user.id)
+    let userHtml = ""
+    userHtml+="<td>"+user.id+"</td>"
+    userHtml+="<td>"+user.firstName+"</td>"
+    userHtml+="<td>"+user.secondName+"</td>"
+    userHtml+="<td>"+user.age+"</td>"
+    userHtml+="<td>"+user.login+"</td>"
+    userHtml+="<td>"+user.roles+"</td>"
+    userHtml+= "<td>"+"<button type='button' class='btn btn-primary' data-toggle='modal' data-target='#editModal' " +
+        "data-userId='" + user.id + "'" +
+        ">Edit</button></td>";
+    userHtml += "<td>" + "<button type='button' class='btn btn-danger' data-toggle='modal' data-target='#deleteModal'" +
+        " data-userId='" + user.id + "'" +
+        ">Delete</button></td>";
+    element.innerHTML = userHtml;
+}
+
 const addButton = document.getElementById("add-user-button")
 addButton.addEventListener('click',function (e){
     e.preventDefault()
@@ -106,7 +147,15 @@ addButton.addEventListener('click',function (e){
     const login = form.elements.namedItem("login").value
     const password = form.elements.namedItem("password").value
     const role = form.elements.namedItem("role").value
-    addUser(firstName,secondName,age,login,password,role)
+    let user = {
+        firstName: firstName,
+        secondName: secondName,
+        age: age,
+        login: login,
+        password: password,
+        role: role
+    }
+    addUser(user)
     form.elements.namedItem("firstName").value = "";
     form.elements.namedItem("secondName").value = "";
     form.elements.namedItem("age").value = "";
@@ -180,29 +229,13 @@ deleteModal.on('show.bs.modal', function (event) {
     })
 })
 
-async function updateTable(){
+async function initTable(){
     const response = await fetch("http://localhost:8080/users");
     const data = response.json();
     data.then(data => {
-            let tableData = "";
             data.forEach(user => {
-                tableData+="<tr id='"+user.id+"'>";
-                tableData+="<td>"+user.id+"</td>"
-                tableData+="<td>"+user.firstName+"</td>"
-                tableData+="<td>"+user.secondName+"</td>"
-                tableData+="<td>"+user.age+"</td>"
-                tableData+="<td>"+user.login+"</td>"
-                tableData+="<td>"+user.roles+"</td>"
-                tableData+= "<td>"+"<button type='button' class='btn btn-primary' data-toggle='modal' data-target='#editModal' " +
-                    "data-userId='" + user.id + "'" +
-                    ">Edit</button></td>";
-                tableData += "<td>" + "<button type='button' class='btn btn-danger' data-toggle='modal' data-target='#deleteModal'" +
-                    " data-userId='" + user.id + "'" +
-                    ">Delete</button></td>";
-
-                tableData+="</tr>";
+                addUserOnPage(user)
             })
-            document.getElementById("dataTable").innerHTML = tableData;
         }
     )
 }

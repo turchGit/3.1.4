@@ -7,9 +7,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashSet;
+
 import java.util.List;
-import java.util.Set;
+
 
 @RestController
 public class UserRestController {
@@ -34,21 +34,9 @@ public class UserRestController {
 
     @PostMapping("users")
     @PreAuthorize("hasAuthority('ADMIN')")
-    public String addUser(@RequestBody User user) {
-        if (userService.getUsers().stream().anyMatch(user1 -> user1.getLogin().equals(user.getLogin())) &&
-                !userService.getUserById(user.getId()).getLogin().equals(user.getLogin())) {
-            return "login is already taken";
-        }
-        Set<Role> roles = new HashSet<>();
-        roles.add(Role.USER);
-        if (user.getRole() == Role.ADMIN) {
-            roles.add(Role.ADMIN);
-        } else {
-            roles.remove(Role.ADMIN);
-        }
-        user.setRoles(roles);
-        userService.addUser(user);
-        return "success";
+    public User addUser(@RequestBody User user) {
+
+        return userService.addUser(user);
     }
 
     @DeleteMapping("users/{id}")
@@ -61,20 +49,8 @@ public class UserRestController {
 
     @PutMapping("users")
     @PreAuthorize("hasAuthority('ADMIN')")
-    public String updateUser(@RequestBody User user) {
-        if (userService.getUsers().stream().anyMatch(user1 -> user1.getLogin().equals(user.getLogin())) &&
-                !userService.getUserById(user.getId()).getLogin().equals(user.getLogin())) {
-            return "login is already taken";
-        }
-        Set<Role> roles = new HashSet<>();
-        roles.add(Role.USER);
-        if (user.getRole() == Role.ADMIN) {
-            roles.add(Role.ADMIN);
-        } else {
-            roles.remove(Role.ADMIN);
-        }
-        user.setRoles(roles);
-        userService.updateUser(user);
-        return "success";
+    public User updateUser(@RequestBody User user) {
+
+        return userService.updateUser(user);
     }
 }
